@@ -1,0 +1,17 @@
+Na struct todos os membros têm espaço próprio, e podem ser usados tds os membros.- é usado mais memória 
+e no union todos os membros compartilham o mesmo espaço e apenas um membro deve ser usado por vez - é usado menos memória
+
+ex struct:
+#include <stdio.h>
+struct Pessoa {
+    char nome[50];
+    int idade;
+    float altura;
+};
+
+int main() {
+    struct Pessoa p = {"João", 30, 1.75};
+    printf("Nome: %s \nIdade: %d \nAltura: %f", p.nome, p.idade, p.altura);
+    return 0;
+}
+
