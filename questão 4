@@ -1,0 +1,7 @@
+O preço dos produtos em uma loja de aeroporto pode ser exibido em reais, dólares ou euros.
+
+Crie um tipo de dados Precoque permita três representações e identifique o subtipo em uso.
+
+Crie uma função exibeque receba um dado do tipo Precoe exiba o valor e a moeda.
+
+Crie uma função alteraque receba um preço e altere-o para o subtipo passado. Use a função exibepara verificar se a conversão está correta.
