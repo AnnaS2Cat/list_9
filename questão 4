@@ -5,3 +5,98 @@ Crie um tipo de dados Precoque permita três representações e identifique o su
 Crie uma função exibeque receba um dado do tipo Precoe exiba o valor e a moeda.
 
 Crie uma função alteraque receba um preço e altere-o para o subtipo passado. Use a função exibepara verificar se a conversão está correta.
+#include <stdio.h>
+
+// Enum para identificar a moeda usada
+typedef enum {
+    REAL,
+    DOLAR,
+    EURO
+} Moeda;
+
+// Union para o valor em uma das moedas
+typedef union {
+    float real;
+    float dolar;
+    float euro;
+} ValorMoeda;
+
+// Struct Preco com union + tipo da moeda
+typedef struct {
+    ValorMoeda valor;
+    Moeda tipo;
+} Preco;
+
+// Função para exibir o valor de acordo com o tipo de moeda
+void exibe(Preco p) {
+    switch (p.tipo) {
+        case REAL:
+            printf("R$ %.2f (Real)\n", p.valor.real);
+            break;
+        case DOLAR:
+            printf("US$ %.2f (Dólar)\n", p.valor.dolar);
+            break;
+        case EURO:
+            printf("€ %.2f (Euro)\n", p.valor.euro);
+            break;
+        default:
+            printf("Moeda desconhecida\n");
+    }
+}
+
+// Função para alterar o tipo de moeda com conversão
+void altera(Preco *p, Moeda nova_moeda) {
+    float valor_em_reais;
+
+    // Converter valor atual para reais
+    switch (p->tipo) {
+        case REAL:
+            valor_em_reais = p->valor.real;
+            break;
+        case DOLAR:
+            valor_em_reais = p->valor.dolar * 5.00;
+            break;
+        case EURO:
+            valor_em_reais = p->valor.euro * 6.00;
+            break;
+    }
+
+    // Converter de reais para nova moeda e atualizar a union
+    switch (nova_moeda) {
+        case REAL:
+            p->valor.real = valor_em_reais;
+            break;
+        case DOLAR:
+            p->valor.dolar = valor_em_reais / 5.00;
+            break;
+        case EURO:
+            p->valor.euro = valor_em_reais / 6.00;
+            break;
+    }
+
+    p->tipo = nova_moeda;
+}
+
+// Função principal para teste
+int main() {
+    Preco p;
+
+    // Inicializa com 100 reais
+    p.valor.real = 100.0;
+    p.tipo = REAL;
+
+    printf("Preço original: ");
+    exibe(p);
+
+    altera(&p, DOLAR);
+    printf("Convertido para Dólar: ");
+    exibe(p);
+
+    altera(&p, EURO);
+    printf("Convertido para Euro: ");
+    exibe(p);
+
+    altera(&p, REAL);
+    printf("Convertido de volta para Real: ");
+    exibe(p);
+}
