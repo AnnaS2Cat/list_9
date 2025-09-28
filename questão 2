@@ -1,1 +1,64 @@
 Crie uma unionpara representar um cidadão que pode ser identificado por CPF, RGou nome completo.
+#include <stdio.h>
+#include <string.h>
+
+// Define a union para os dados
+typedef union {
+    int CPF;
+    int RG;
+    char nomecp[100];
+} Data;
+
+// Enum para indicar qual tipo está ativo
+typedef enum {
+    TIPO_CPF,
+    TIPO_RG,
+    TIPO_NOME
+} TipoDado;
+
+// Struct que agrupa o tipo e os dados
+typedef struct {
+    TipoDado tipo;
+    Data dado;
+} Cidadao;
+
+// Função para imprimir os dados corretamente
+void indent(Cidadao p) {
+    switch (p.tipo) {
+        case TIPO_CPF:
+            printf("CPF: %d\n", p.dado.CPF);
+            break;
+        case TIPO_RG:
+            printf("RG: %d\n", p.dado.RG);
+            break;
+        case TIPO_NOME:
+            printf("Nome completo: %s\n", p.dado.nomecp);
+            break;
+        default:
+            printf("Tipo desconhecido.\n");
+    }
+}
+
+int main(void) {
+    // Exemplo com CPF
+    Cidadao cid1;
+    cid1.tipo = TIPO_CPF;
+    cid1.dado.CPF = 123456789;
+
+    // Exemplo com RG
+    Cidadao cid2;
+    cid2.tipo = TIPO_RG;
+    cid2.dado.RG = 987654321;
+
+    // Exemplo com nome
+    Cidadao cid3;
+    cid3.tipo = TIPO_NOME;
+    strcpy(cid3.dado.nomecp, "Maria Silva");
+
+    // Testar função indent
+    indent(cid1);
+    indent(cid2);
+    indent(cid3);
+
+    return 0;
+}
