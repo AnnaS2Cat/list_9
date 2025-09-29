@@ -1,102 +1,95 @@
-O preço dos produtos em uma loja de aeroporto pode ser exibido em reais, dólares ou euros.
-
-Crie um tipo de dados Precoque permita três representações e identifique o subtipo em uso.
-
-Crie uma função exibeque receba um dado do tipo Precoe exiba o valor e a moeda.
-
-Crie uma função alteraque receba um preço e altere-o para o subtipo passado. Use a função exibepara verificar se a conversão está correta.
+/*O preço dos produtos em uma loja de aeroporto pode ser exibido em reais, dólares ou euros.
+Crie um tipo de dados Preco que permita três representações e identifique o subtipo em uso.
+Crie uma função exibe que receba um dado do tipo Preco e exiba o valor e a moeda.
+Crie uma função altera que receba um preço e altere-o para o subtipo passado. Use a função exibe para verificar se a conversão está correta.*/
+#include <stdio.h>
 #include <stdio.h>
 
-// Enum para identificar a moeda usada
-typedef enum {
+// Definição dos tipos de moeda
+enum TipoMoeda {
     REAL,
     DOLAR,
     EURO
-} Moeda;
+};
 
-// Union para o valor em uma das moedas
-typedef union {
+// Union para armazenar o valor (uma moeda de cada vez)
+union Valor {
     float real;
     float dolar;
     float euro;
-} ValorMoeda;
+};
 
-// Struct Preco com union + tipo da moeda
-typedef struct {
-    ValorMoeda valor;
-    Moeda tipo;
-} Preco;
+// Struct para representar um preço com tipo de moeda
+struct Preco {
+    enum TipoMoeda tipo;
+    union Valor val;
+};
 
-// Função para exibir o valor de acordo com o tipo de moeda
-void exibe(Preco p) {
-    switch (p.tipo) {
-        case REAL:
-            printf("R$ %.2f (Real)\n", p.valor.real);
-            break;
-        case DOLAR:
-            printf("US$ %.2f (Dólar)\n", p.valor.dolar);
-            break;
-        case EURO:
-            printf("€ %.2f (Euro)\n", p.valor.euro);
-            break;
-        default:
-            printf("Moeda desconhecida\n");
+// Função para exibir o preço com base no tipo de moeda
+void exibe(struct Preco p) {
+    if (p.tipo == REAL) {
+        printf("Preço: R$ %.2f (Real)\n", p.val.real);
+    } else if (p.tipo == DOLAR) {
+        printf("Preço: US$ %.2f (Dólar)\n", p.val.dolar);
+    } else if (p.tipo == EURO) {
+        printf("Preço: € %.2f (Euro)\n", p.val.euro);
+    } else {
+        printf("Tipo de moeda desconhecido.\n");
     }
 }
 
-// Função para alterar o tipo de moeda com conversão
-void altera(Preco *p, Moeda nova_moeda) {
-    float valor_em_reais;
+// Função para converter o preço para outro tipo de moeda
+struct Preco altera(struct Preco p, enum TipoMoeda novoTipo) {
+    float valorEmReais;
 
-    // Converter valor atual para reais
-    switch (p->tipo) {
-        case REAL:
-            valor_em_reais = p->valor.real;
-            break;
-        case DOLAR:
-            valor_em_reais = p->valor.dolar * 5.00;
-            break;
-        case EURO:
-            valor_em_reais = p->valor.euro * 6.00;
-            break;
+    // Converte o valor atual para reais
+    if (p.tipo == REAL) {
+        valorEmReais = p.val.real;
+    } else if (p.tipo == DOLAR) {
+        valorEmReais = p.val.dolar * 5.00; // Exemplo: 1 dólar = R$ 5,00
+    } else if (p.tipo == EURO) {
+        valorEmReais = p.val.euro * 5.50; // Exemplo: 1 euro = R$ 5,50
+    } else {
+        printf("Tipo de moeda inválido para conversão.\n");
+        valorEmReais = 0;
     }
 
-    // Converter de reais para nova moeda e atualizar a union
-    switch (nova_moeda) {
-        case REAL:
-            p->valor.real = valor_em_reais;
-            break;
-        case DOLAR:
-            p->valor.dolar = valor_em_reais / 5.00;
-            break;
-        case EURO:
-            p->valor.euro = valor_em_reais / 6.00;
-            break;
+    // Converte de reais para o novo tipo de moeda
+    struct Preco novoPreco;
+    novoPreco.tipo = novoTipo;
+
+    if (novoTipo == REAL) {
+        novoPreco.val.real = valorEmReais;
+    } else if (novoTipo == DOLAR) {
+        novoPreco.val.dolar = valorEmReais / 5.00;
+    } else if (novoTipo == EURO) {
+        novoPreco.val.euro = valorEmReais / 5.50;
+    } else {
+        printf("Tipo de moeda inválido para conversão.\n");
     }
 
-    p->tipo = nova_moeda;
+    return novoPreco;
 }
 
-// Função principal para teste
-int main() {
-    Preco p;
+// Função principal para testar
+int main(void) {
+    struct Preco p;
 
-    // Inicializa com 100 reais
-    p.valor.real = 100.0;
-    p.tipo = REAL;
+    // Definindo um preço em dólar
+    p.tipo = DOLAR;
+    p.val.dolar = 10.0;
 
-    printf("Preço original: ");
+    printf("Preço original:\n");
     exibe(p);
 
-    altera(&p, DOLAR);
-    printf("Convertido para Dólar: ");
-    exibe(p);
+    // Converte para euro
+    struct Preco convertido = altera(p, EURO);
+    printf("Convertido para Euro:\n");
+    exibe(convertido);
 
-    altera(&p, EURO);
-    printf("Convertido para Euro: ");
-    exibe(p);
+    // Converte para real
+    struct Preco convertido2 = altera(p, REAL);
+    printf("Convertido para Real:\n");
+    exibe(convertido2);
 
-    altera(&p, REAL);
-    printf("Convertido de volta para Real: ");
-    exibe(p);
 }
